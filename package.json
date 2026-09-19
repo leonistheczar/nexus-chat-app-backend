@@ -1,0 +1,41 @@
+{
+  "name": "nexus-backend",
+  "version": "1.0.0",
+  "description": "Backend API for Nexus application",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node src/server.ts",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
+  },
+  "keywords": [
+    "nexus",
+    "backend",
+    "api",
+    "typescript",
+    "node"
+  ],
+  "author": "Muhammad Ali",
+  "license": "ISC",
+  "packageManager": "pnpm@10.33.1",
+  "dependencies": {
+    "@clerk/express": "^2.1.63",
+    "@neondatabase/serverless": "^1.1.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "drizzle-orm": "^0.45.2",
+    "express": "^5.2.1",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.3.0",
+    "drizzle-kit": "^0.31.10",
+    "tsx": "^4.23.12",
+    "typescript": "^7.0.2"
+  }
+}
