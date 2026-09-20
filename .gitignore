@@ -27,7 +27,7 @@ coverage/
 
 # Testing
 .nyc_output/
-
+plans.md
 # OS files
 .DS_Store
 Thumbs.db
@@ -37,5 +37,7 @@ Thumbs.db
 .idea/
 
 # Temporary files
+src/db/schemas/test.schema.ts
 *.tmp
 *.temp
+
