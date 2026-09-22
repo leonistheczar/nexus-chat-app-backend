@@ -2,12 +2,12 @@
   "name": "nexus-backend",
   "version": "1.0.0",
   "description": "Backend API for Nexus application",
-  "main": "server.js",
+  "main": "app.ts",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
+    "dev": "tsx watch src/app.ts",
     "build": "tsc",
-    "start": "node src/server.ts",
+    "start": "node src/app.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate"
   },
@@ -24,6 +24,7 @@
   "dependencies": {
     "@clerk/express": "^2.1.63",
     "@neondatabase/serverless": "^1.1.0",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",
@@ -31,6 +32,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^26.3.0",

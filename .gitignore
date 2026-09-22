@@ -4,7 +4,6 @@ node_modules/
 # Environment variables
 .env
 .env.*
-!.env.example
 
 # Build output
 dist/
@@ -38,6 +37,7 @@ Thumbs.db
 
 # Temporary files
 src/db/schemas/test.schema.ts
+src/testing.migration.ts
 *.tmp
 *.temp
 
