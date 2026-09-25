@@ -2,12 +2,12 @@ import express from "express";
 import "dotenv/config";
 import cors from "cors";
 import cookieParser from "cookie-parser"
-import { clerkClient, clerkMiddleware, getAuth } from "@clerk/express";
+import { clerkMiddleware } from "@clerk/express";
 
-import { errorHandler } from "./middleware/errorHandler.js";
+import { errorHandler } from "./middlewares/errorHandler.js";
+import userRoutes from "./routes/userRoutes.js";
 // CONSTANTS
 const PORT = process.env.PORT || 5000;
-const API_BASE_URL= "/api/v1"
 
 // Express App
 const app = express();
@@ -23,19 +23,8 @@ app.use(express.urlencoded({extended: true}))
 app.use(cookieParser())
 app.use(clerkMiddleware());
 
-// Testing route
-app.get(`${API_BASE_URL}/users`, async (req, res) => {
-    const auth = getAuth(req);
-    if(!auth.isAuthenticated){
-        return res.status(401).json({
-            message: "Not authorized"
-        });
-    }
-    const user = await clerkClient.users.getUser(auth.userId);
-    return res.status(200).json({
-        user,
-    });
-})
+// User(s) Routes
+app.use(`${process.env.API_BASE_URL}`, userRoutes)
 // 404 Fallback
 app.use((req, res, next) => {
     const error = new Error(`Not found = ${req.originalUrl}`);
