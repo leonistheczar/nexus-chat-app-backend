@@ -34,4 +34,9 @@ router.get("/users/me", async (req, res, next) => {
     next(err);
   }
 });
+// POST
+// @route   GET api/v1/users/me/create
+// @desc    Create the user for the platform (new)
+// @access  Private
+
 export default router;

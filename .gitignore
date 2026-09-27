@@ -38,6 +38,7 @@ Thumbs.db
 # Temporary files
 src/db/schemas/test.schema.ts
 src/testing.migration.ts
+src/testing.connection.ts
 *.tmp
 *.temp
 
