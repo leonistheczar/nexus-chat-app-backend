@@ -8,6 +8,7 @@ import { errorHandler } from "./middlewares/errorHandler.js";
 import userRoutes from "./routes/userRoutes.js";
 // CONSTANTS
 const PORT = process.env.PORT || 5000;
+const API_BASE_PATH = `/${(process.env.API_BASE_URL)}`;
 
 // Express App
 const app = express();
@@ -24,16 +25,17 @@ app.use(cookieParser())
 app.use(clerkMiddleware());
 
 // User(s) Routes
-app.use(`${process.env.API_BASE_URL}`, userRoutes)
+app.use(`${API_BASE_PATH}/`, userRoutes)
 // 404 Fallback
 app.use((req, res, next) => {
-    const error = new Error(`Not found = ${req.originalUrl}`);
+    const error = new Error(`Not found = Cannot process this request`);
     res.status(404);
     next(error);
 })
 // Error Handler
 app.use(errorHandler)
 app.listen(PORT, () => {
+    console.log(`${PORT}/${process.env.API_BASE_URL}/`)
     console.log(`Nexus backend started successfully on port ${PORT}`)
 })
 
