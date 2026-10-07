@@ -9,7 +9,8 @@
     "build": "tsc",
     "start": "node src/app.ts",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "drizzle-kit migrate",
+    "db:backfill-emails": "tsx scripts/backfillUserEmails.ts"
   },
   "keywords": [
     "nexus",

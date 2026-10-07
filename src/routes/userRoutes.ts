@@ -1,4 +1,4 @@
-import { getAuth } from "@clerk/express";
+import { clerkClient, getAuth } from "@clerk/express";
 import { randomUUID } from "node:crypto";
 import express from "express";
 import { db } from "../db/index.js";
@@ -44,10 +44,12 @@ router.get("/users/me", async (req, res, next) => {
     return res.status(200).json({
       data: {
         id: user.id,
+        email: user.email,
         username: user.username,
         firstName: user.firstName,
         lastName: user.lastName,
         displayName: user.displayName,
+        phone_e164: user.phoneE164,
         avatarUrl: user.avatarUrl,
         profileStatus: user.profileStatus,
         lastSeenAt: user.lastSeenAt,
@@ -69,23 +71,25 @@ router.post("/users/me/create", async (req, res, next) => {
   if (!auth.isAuthenticated) {
     return res.status(401).json({ data: null, message: "Unauthorized" });
   }
-  const { firstName, lastName, phoneE164, displayName, username } = req.body;
+  const { firstName, lastName, phone_e164, displayName, username } = req.body;
   const profileData = {
     firstName,
     lastName,
-    phoneE164,
+    phoneE164: phone_e164,
     username,
     displayName,
   };
-  const result = userValidation.safeParse(profileData);
-  if (!result.success) {
+  const profileResult = userValidation
+    .omit({ email: true })
+    .safeParse(profileData);
+  if (!profileResult.success) {
     return res.status(400).json({
       data: null,
       message: "Invalid profile data",
-      errors: z.treeifyError(result.error),
+      errors: z.treeifyError(profileResult.error),
     });
   }
-  const checkUsername = result.data.username.toLowerCase();
+  const checkUsername = profileResult.data.username.toLowerCase();
 
   try {
     // Existing user checks
@@ -111,6 +115,32 @@ router.post("/users/me/create", async (req, res, next) => {
         .json({ data: null, message: "Username already exists" });
     }
 
+    const clerkUser = await clerkClient.users.getUser(auth.userId);
+    const primaryEmail = clerkUser.primaryEmailAddress;
+
+    if (
+      !primaryEmail ||
+      primaryEmail.verification?.status !== "verified"
+    ) {
+      return res.status(422).json({
+        data: null,
+        message: "A verified primary email is required to create a profile",
+      });
+    }
+
+    const email = primaryEmail.emailAddress.trim().toLowerCase();
+    const result = userValidation.safeParse({
+      ...profileResult.data,
+      email,
+    });
+
+    if (!result.success) {
+      return res.status(422).json({
+        data: null,
+        message: "Clerk returned an invalid primary email",
+      });
+    }
+
     // Neon HTTP batches run as a transaction, so a completed profile cannot
     // be committed without its self-chat and participant membership.
     const userId = randomUUID();
@@ -124,12 +154,14 @@ router.post("/users/me/create", async (req, res, next) => {
           username: checkUsername,
           firstName: result.data.firstName,
           lastName: result.data.lastName,
+          email: result.data.email,
           phoneE164: result.data.phoneE164,
           displayName: result.data.displayName,
           profileStatus: "active",
         })
         .returning({
           id: users.id,
+          email: users.email,
           username: users.username,
           firstName: users.firstName,
           lastName: users.lastName,
@@ -178,9 +210,11 @@ router.post("/users/me/create", async (req, res, next) => {
       const constraint = String(databaseError.constraint ?? "");
       const message = constraint.includes("username")
         ? "Username already exists"
-        : constraint.includes("phone")
-          ? "Phone number already exists"
-          : "User profile already exists";
+        : constraint.includes("email")
+          ? "Email already exists"
+          : constraint.includes("phone")
+            ? "Phone number already exists"
+            : "User profile already exists";
 
       return res.status(409).json({ data: null, message });
     }
