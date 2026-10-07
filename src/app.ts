@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser"
 import { clerkMiddleware } from "@clerk/express";
 
 import { errorHandler } from "./middlewares/errorHandler.js";
+import selfChatRoutes from "./routes/selfChatRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 // CONSTANTS
 const PORT = process.env.PORT || 5000;
@@ -26,6 +27,7 @@ app.use(clerkMiddleware());
 
 // User(s) Routes
 app.use(`${API_BASE_PATH}/`, userRoutes)
+app.use(`${API_BASE_PATH}/`, selfChatRoutes)
 // 404 Fallback
 app.use((req, res, next) => {
     const error = new Error(`Not found = Cannot process this request`);

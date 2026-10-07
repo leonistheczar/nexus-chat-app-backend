@@ -15,9 +15,6 @@ npm-debug.log*
 pnpm-debug.log*
 yarn-debug.log*
 
-# Drizzle local/generated migrations
-drizzle/
-
 # TypeScript
 *.tsbuildinfo
 
