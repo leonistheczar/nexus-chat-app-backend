@@ -8,6 +8,7 @@
     "dev": "tsx watch src/app.ts",
     "build": "tsc",
     "start": "node src/app.ts",
+    "test": "tsc && node --test dist/src/utils/contactRequest.validation.test.js dist/src/utils/userSearch.validation.test.js dist/src/routes/userSearchRoutes.test.js",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:backfill-emails": "tsx scripts/backfillUserEmails.ts"

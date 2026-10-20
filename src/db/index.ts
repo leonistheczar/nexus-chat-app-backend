@@ -1,6 +1,7 @@
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import { contacts } from "./schemas/contacts.schema.js";
+import { contactRequests } from "./schemas/contactRequest.schema.js";
 import {
   conversationParticipants,
   conversations,
@@ -17,6 +18,7 @@ export const db = drizzle({
     schema: {
       users,
       contacts,
+      contactRequests,
       conversations,
       conversationParticipants,
       messages,

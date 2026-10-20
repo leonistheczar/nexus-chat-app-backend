@@ -7,6 +7,8 @@ import { clerkMiddleware } from "@clerk/express";
 import { errorHandler } from "./middlewares/errorHandler.js";
 import selfChatRoutes from "./routes/selfChatRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import contactRequestRoutes from "./routes/contactRequestRoutes.js";
+import userSearchRoutes from "./routes/userSearchRoutes.js";
 // CONSTANTS
 const PORT = process.env.PORT || 5000;
 const API_BASE_PATH = `/${(process.env.API_BASE_URL)}`;
@@ -27,7 +29,9 @@ app.use(clerkMiddleware());
 
 // User(s) Routes
 app.use(`${API_BASE_PATH}/`, userRoutes)
+app.use(`${API_BASE_PATH}/`, userSearchRoutes)
 app.use(`${API_BASE_PATH}/`, selfChatRoutes)
+app.use(`${API_BASE_PATH}/`, contactRequestRoutes)
 // 404 Fallback
 app.use((req, res, next) => {
     const error = new Error(`Not found = Cannot process this request`);
