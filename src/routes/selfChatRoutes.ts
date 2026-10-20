@@ -7,10 +7,7 @@ import {
   conversationParticipants,
   conversations,
 } from "../db/schemas/conversation.schema.js";
-import {
-  messageAttachments,
-  messages,
-} from "../db/schemas/message.schema.js";
+import { messageAttachments, messages } from "../db/schemas/message.schema.js";
 import { users } from "../db/schemas/user.schema.js";
 
 const router = express.Router();
@@ -56,7 +53,9 @@ router.get("/self-chat/messages", async (req, res, next) => {
       return res.status(401).json({ data: null, message: "Unauthorized" });
     }
     if (resolved.status === 404) {
-      return res.status(404).json({ data: null, message: "Self-chat not found" });
+      return res
+        .status(404)
+        .json({ data: null, message: "Self-chat not found" });
     }
 
     const queryValidation = z
@@ -126,7 +125,12 @@ router.get("/self-chat/messages", async (req, res, next) => {
             createdAt: messageAttachments.createdAt,
           })
           .from(messageAttachments)
-          .where(inArray(messageAttachments.messageId, page.map(({ id }) => id)))
+          .where(
+            inArray(
+              messageAttachments.messageId,
+              page.map(({ id }) => id),
+            ),
+          )
       : [];
     const attachmentsByMessage = new Map<string, typeof attachments>();
     for (const attachment of attachments) {
@@ -165,7 +169,9 @@ router.post("/self-chat/messages", async (req, res, next) => {
       return res.status(401).json({ data: null, message: "Unauthorized" });
     }
     if (resolved.status === 404) {
-      return res.status(404).json({ data: null, message: "Self-chat not found" });
+      return res
+        .status(404)
+        .json({ data: null, message: "Self-chat not found" });
     }
 
     const [createdMessages] = await db.batch([
