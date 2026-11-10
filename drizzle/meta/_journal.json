@@ -43,6 +43,13 @@
       "when": 1792497022420,
       "tag": "0005_tired_madrox",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1794329223755,
+      "tag": "0006_chubby_sentry",
+      "breakpoints": true
     }
   ]
 }

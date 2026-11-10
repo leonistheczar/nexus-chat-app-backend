@@ -26,6 +26,8 @@ export const messages = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
 
+    clientOperationId: uuid("client_operation_id"),
+
     body: text("body"),
 
     createdAt: timestamp("created_at", { withTimezone: true })
@@ -42,6 +44,9 @@ export const messages = pgTable(
       table.createdAt.desc(),
       table.id.desc(),
     ),
+    uniqueIndex("messages_operation_scope_unique")
+      .on(table.conversationId, table.senderId, table.clientOperationId)
+      .where(sql`${table.clientOperationId} is not null`),
   ],
 );
 

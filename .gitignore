@@ -36,6 +36,10 @@ Thumbs.db
 src/db/schemas/test.schema.ts
 src/testing.migration.ts
 src/testing.connection.ts
+/plans
 *.tmp
 *.temp
+
+# Local frontend handoff note
+/Changes for frontend.md
 

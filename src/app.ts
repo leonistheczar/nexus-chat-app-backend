@@ -2,13 +2,15 @@ import express from "express";
 import "dotenv/config";
 import cors from "cors";
 import cookieParser from "cookie-parser"
+import { createServer } from "node:http";
 import { clerkMiddleware } from "@clerk/express";
 
 import { errorHandler } from "./middlewares/errorHandler.js";
-import selfChatRoutes from "./routes/selfChatRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import contactRequestRoutes from "./routes/contactRequestRoutes.js";
 import userSearchRoutes from "./routes/userSearchRoutes.js";
+import { createSocketServer } from "./socket/server.js";
+import { getAllowedFrontendOrigins } from "./socket/config.js";
 // CONSTANTS
 const PORT = process.env.PORT || 5000;
 const API_BASE_PATH = `/${(process.env.API_BASE_URL)}`;
@@ -17,9 +19,7 @@ const API_BASE_PATH = `/${(process.env.API_BASE_URL)}`;
 const app = express();
 
 // CORS Allowed Origins
-const allowedOrigins = [
-    "http://localhost:3000"
-]
+const allowedOrigins = getAllowedFrontendOrigins();
 // Middlewares
 app.use(cors({origin: allowedOrigins, credentials: true}));
 app.use(express.json());
@@ -30,7 +30,7 @@ app.use(clerkMiddleware());
 // User(s) Routes
 app.use(`${API_BASE_PATH}/`, userRoutes)
 app.use(`${API_BASE_PATH}/`, userSearchRoutes)
-app.use(`${API_BASE_PATH}/`, selfChatRoutes)
+// Message history and sends moved from HTTP to authenticated Socket.IO events; see plans/socketPlans.md.
 app.use(`${API_BASE_PATH}/`, contactRequestRoutes)
 // 404 Fallback
 app.use((req, res, next) => {
@@ -40,9 +40,18 @@ app.use((req, res, next) => {
 })
 // Error Handler
 app.use(errorHandler)
-app.listen(PORT, () => {
+const httpServer = createServer(app);
+export const io = createSocketServer(httpServer);
+
+httpServer.listen(PORT, () => {
     console.log(`${PORT}/${process.env.API_BASE_URL}/`)
     console.log(`Nexus backend started successfully on port ${PORT}`)
 })
+
+const shutdown = () => {
+    io.close(() => process.exit(0));
+};
+process.once("SIGINT", shutdown);
+process.once("SIGTERM", shutdown);
 
 export default app;
